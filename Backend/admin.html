@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Admin User</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            margin: 0;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            max-width: 400px;
+            width: 100%;
+        }
+        h1 {
+            color: #2B4C8F;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .info {
+            background: #f0f4ff;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .info p {
+            margin: 10px 0;
+            color: #333;
+        }
+        .info strong {
+            color: #2B4C8F;
+        }
+        button {
+            width: 100%;
+            padding: 15px;
+            background: #2B4C8F;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+        button:hover {
+            background: #1e3a6f;
+        }
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        .message {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 5px;
+            text-align: center;
+            display: none;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Create Default Admin</h1>
+        
+        <div class="info">
+            <p><strong>Email:</strong> admin@triptokailash.com</p>
+            <p><strong>Password:</strong> Admin@123</p>
+            <p style="color: #666; font-size: 14px; margin-top: 15px;">
+                Click the button below to create the admin user in your database.
+            </p>
+        </div>
+
+        <button onclick="createAdmin()" id="createBtn">
+            Create Admin User
+        </button>
+
+        <div class="message" id="message"></div>
+    </div>
+
+    <script>
+        async function createAdmin() {
+            const btn = document.getElementById('createBtn');
+            const message = document.getElementById('message');
+            
+            btn.disabled = true;
+            btn.textContent = 'Creating...';
+            message.style.display = 'none';
+
+            try {
+                const response = await fetch('http://localhost:5000/api/admin/create-admin', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        username: 'Admin User',
+                        email: 'admin@triptokailash.com',
+                        password: 'Admin@123'
+                    })
+                });
+
+                const data = await response.json();
+
+                if (response.ok) {
+                    message.className = 'message success';
+                    message.textContent = '✓ Admin user created successfully! You can now login.';
+                    message.style.display = 'block';
+                    btn.textContent = 'Admin Created!';
+                    
+                    setTimeout(() => {
+                        window.location.href = 'http://localhost:5173/login';
+                    }, 2000);
+                } else {
+                    message.className = 'message error';
+                    message.textContent = data.error || 'Failed to create admin';
+                    message.style.display = 'block';
+                    btn.disabled = false;
+                    btn.textContent = 'Try Again';
+                }
+            } catch (error) {
+                message.className = 'message error';
+                message.textContent = 'Network error. Make sure your backend server is running on port 5000.';
+                message.style.display = 'block';
+                btn.disabled = false;
+                btn.textContent = 'Try Again';
+            }
+        }
+    </script>
+</body>
+</html>
