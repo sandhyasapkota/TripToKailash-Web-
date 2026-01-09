@@ -7,7 +7,9 @@ export {
   registerUser, 
   loginUser,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  uploadProfilePicture,
+  verifyTokenEndpoint
 } from './User/UserController.js';
 
 export {

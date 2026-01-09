@@ -83,7 +83,7 @@ const registerUser = async (req, res) => {
 // Login user
 const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, rememberMe } = req.body;
 
     if (!email || !password) {
       return res.status(400).json({ error: "Email and password are required" });
@@ -101,11 +101,14 @@ const loginUser = async (req, res) => {
       return res.status(401).json({ error: "Invalid email or password" });
     }
 
+    // Set token expiry to 1 minute
+    const tokenExpiry = '1min';
+
     // Generate JWT token
     const token = jwt.sign(
       { id: user.id, email: user.email, role: user.role },
       process.env.JWT_SECRET || 'your-secret-key',
-      { expiresIn: '24h' }
+      { expiresIn: tokenExpiry }
     );
 
     res.status(200).json({ 
@@ -115,7 +118,9 @@ const loginUser = async (req, res) => {
         id: user.id,
         username: user.username,
         email: user.email,
-        role: user.role
+        phone: user.phone,
+        role: user.role,
+        profilePicture: user.profilePicture
       }
     });
   } catch (error) {
@@ -296,6 +301,63 @@ const resetPassword = async (req, res) => {
   }
 };
 
+const uploadProfilePicture = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const user = await User.findByPk(userId);
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+
+    // Update user's profile picture path
+    await user.update({ profilePicture: req.file.filename });
+
+    res.status(200).json({ 
+      data: { profilePicture: req.file.filename }, 
+      message: "Profile picture uploaded successfully" 
+    });
+  } catch (error) {
+    console.error('Upload profile picture error:', error);
+    res.status(500).json({ error: "Failed to upload profile picture" });
+  }
+};
+
+// Verify token endpoint for frontend validation
+const verifyTokenEndpoint = async (req, res) => {
+  try {
+    const token = req.headers.authorization?.split(' ')[1];
+    
+    if (!token) {
+      return res.status(401).json({ error: 'No token provided' });
+    }
+
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    
+    const user = await User.findByPk(decoded.id);
+    if (!user) {
+      return res.status(401).json({ error: 'User not found' });
+    }
+
+    res.status(200).json({ 
+      valid: true, 
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        phone: user.phone,
+        role: user.role,
+        profilePicture: user.profilePicture
+      }
+    });
+  } catch (error) {
+    res.status(401).json({ error: 'Invalid token' });
+  }
+};
+
 // Export at the end
 export { 
   getAllUsers, 
@@ -306,5 +368,7 @@ export {
   registerUser, 
   loginUser,
   forgotPassword,
-  resetPassword
+  resetPassword,
+  uploadProfilePicture,
+  verifyTokenEndpoint
 };
