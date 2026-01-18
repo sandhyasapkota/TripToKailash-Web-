@@ -9,7 +9,9 @@ export {
   forgotPassword,
   resetPassword,
   uploadProfilePicture,
-  verifyTokenEndpoint
+  verifyTokenEndpoint,
+  verifyEmail,
+  resendVerificationEmail
 } from './User/UserController.js';
 
 export {

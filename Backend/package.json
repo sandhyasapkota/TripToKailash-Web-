@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "nodemon index.js"
+    "start": "nodemon index.js",
+    "seed": "node Database/seed.js",
+    "seed:dev": "nodemon Database/seed.js"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +21,7 @@
     "dotenv": "^17.2.3",
     "express": "^5.2.1",
     "jsonwebtoken": "^9.0.3",
+    "multer": "^1.4.5-lts.1",
     "nodemailer": "^7.0.12",
     "nodemon": "^3.1.11",
     "pg": "^8.16.3",

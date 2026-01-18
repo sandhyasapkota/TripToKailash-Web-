@@ -31,6 +31,7 @@ const ViewDetails = lazy(() => import('./pages/public/ViewDetails'));
 const Packages = lazy(() => import('./pages/public/Packages'));
 const ForgetPassword = lazy(() => import('./pages/public/ForgetPassword'));
 const ResetPassword = lazy(() => import('./pages/public/ResetPassword'));
+const VerifyEmail = lazy(() => import('./pages/public/VerifyEmail'));
 
 // Private pages
 const UserProfile = lazy(() => import("./pages/private/UserProfile"));
@@ -138,6 +139,7 @@ function App() {
           <Route path="/register" element={<AuthRoute><Signup /></AuthRoute>} />
           <Route path="/forgot-password" element={<ForgetPassword />} />
           <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/verify-email" element={<VerifyEmail />} />
 
           {/* 🔒 PROTECTED ROUTES - Require authentication */}
           <Route path="/bookings" element={<ProtectedRoute><Booking /></ProtectedRoute>} />
