@@ -36,6 +36,21 @@ const User = sequelize.define("User", {
     type: DataTypes.STRING,
     allowNull: true,
   },
+  // Email verification fields
+  isEmailVerified: {
+    type: DataTypes.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  },
+  emailVerificationToken: {
+    type: DataTypes.STRING,
+    allowNull: true,
+  },
+  emailVerificationExpiry: {
+    type: DataTypes.BIGINT,
+    allowNull: true,
+  },
+  // Password reset fields
   resetToken: {
     type: DataTypes.STRING,
     allowNull: true,
