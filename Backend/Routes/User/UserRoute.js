@@ -12,8 +12,11 @@ import {
   forgotPassword,
   resetPassword,
   uploadProfilePicture,
-  verifyTokenEndpoint
+  verifyTokenEndpoint,
+  verifyEmail,
+  resendVerificationEmail
 } from '../../Controller/index.js';
+import { verifyToken, isAdmin } from '../../Middleware/authMiddleware.js';
 
 // Configure multer for profile picture upload
 const storage = multer.diskStorage({
@@ -41,19 +44,23 @@ const upload = multer({
 
 const router = express.Router();
 
-// Auth routes
+// Auth routes (public)
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 router.post('/verify-token', verifyTokenEndpoint);
+router.post('/verify-email', verifyEmail);
+router.post('/resend-verification', resendVerificationEmail);
 
-// CRUD routes
-router.get('/', getAllUsers);
-router.post('/', createUser);
-router.get('/:id', getUserById);
-router.put('/:id', updateUserById);
-router.put('/:id/profile-picture', upload.single('profilePicture'), uploadProfilePicture);
-router.delete('/:id', deleteUserById);
+// Admin routes
+router.get('/', verifyToken, isAdmin, getAllUsers);
+router.post('/', verifyToken, isAdmin, createUser);
+router.delete('/:id', verifyToken, isAdmin, deleteUserById);
+
+// User routes (protected)
+router.get('/:id', verifyToken, getUserById);
+router.put('/:id', verifyToken, updateUserById);
+router.put('/:id/profile-picture', verifyToken, upload.single('profilePicture'), uploadProfilePicture);
 
 export {router as UserRoute};
