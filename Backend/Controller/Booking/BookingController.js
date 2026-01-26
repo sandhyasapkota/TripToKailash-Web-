@@ -16,12 +16,26 @@ export const getUserBookings = async (req, res) => {
   }
 };
 
+// Get bookings for the currently logged-in user by ID
+export const getBookingById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const booking = await Booking.findByPk(id);
+    if (!booking) {
+      return res.status(404).json({ error: 'Booking not found' });
+    }
+    res.status(200).json({ data: booking });
+  } catch (error) {
+    console.error('Error fetching booking by ID:', error);
+    res.status(500).json({ error: 'Failed to fetch booking' });
+  }
+};
+    
 // Create a new booking
 export const createBooking = async (req, res) => {
   try {
-    const { productId, travelDate, numberOfPeople, specialRequests } = req.body;
-    const userId = req.user.id;
-    
+    const { productId, travelDate, numberOfPeople, specialRequests, userId } = req.body;
+
     // Validation
     if (!productId) {
       return res.status(400).json({ error: 'Package ID is required' });
@@ -160,6 +174,8 @@ export const updateBookingStatus = async (req, res) => {
   }
 };
 
+
+
 // Delete booking
 export const deleteBooking = async (req, res) => {
   try {
@@ -187,3 +203,7 @@ export const deleteBooking = async (req, res) => {
     res.status(500).json({ error: 'Failed to delete booking' });
   }
 };
+
+// Alias exports (must come after all function definitions)
+export const updateBookingById = updateBookingStatus;
+export const deleteBookingById = deleteBooking;
