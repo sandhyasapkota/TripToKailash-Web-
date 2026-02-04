@@ -1,11 +1,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import logo from '../Images/logo.png';
+import ConfirmModal from './ConfirmModal';
 
 function Navbar() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [showProfileMenu, setShowProfileMenu] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
+    const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
     const navigate = useNavigate();
     const location = useLocation();
     const profileMenuRef = useRef(null);
@@ -48,14 +50,16 @@ function Navbar() {
     }, []);
 
     const handleLogout = () => {
-        if (window.confirm('Are you sure you want to logout?')) {
-            localStorage.removeItem('token');
-            localStorage.removeItem('user');
-            localStorage.removeItem('rememberMe');
-            setUser(null);
-            setIsAuthenticated(false);
-            navigate('/login');
-        }
+        setShowLogoutConfirm(true);
+    };
+
+    const confirmLogout = () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('rememberMe');
+        setUser(null);
+        setIsAuthenticated(false);
+        navigate('/login');
     };
 
     const isActive = (path) => location.pathname === path;
@@ -93,11 +97,12 @@ function Navbar() {
                         <Link to="/reviews" className={navLinkClass('/reviews')}>
                             Reviews
                         </Link>
-                        {isAuthenticated && (
-                            <Link to="/bookings" className={navLinkClass('/bookings')}>
-                                My Bookings
-                            </Link>
-                        )}
+                        <Link to="/contact" className={navLinkClass('/contact')}>
+                            Contact
+                        </Link>
+                        <Link to="/equipment" className={navLinkClass('/equipment')}>
+                            Equipment
+                        </Link>
                     </div>
 
                     {/* Right side - Auth buttons or Profile */}
@@ -127,8 +132,16 @@ function Navbar() {
                                         onClick={() => setShowProfileMenu(!showProfileMenu)}
                                         className="flex items-center space-x-2 bg-white rounded-full p-1 pr-3 hover:bg-gray-100 transition group"
                                     >
-                                        <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold">
-                                            {user?.username ? user.username.charAt(0).toUpperCase() : 'U'}
+                                        <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold overflow-hidden">
+                                            {user?.profilePicture ? (
+                                                <img 
+                                                    src={`http://localhost:5000/uploads/profile-pictures/${user.profilePicture}`} 
+                                                    alt="Profile" 
+                                                    className="w-full h-full object-cover rounded-full"
+                                                />
+                                            ) : (
+                                                user?.username ? user.username.charAt(0).toUpperCase() : 'U'
+                                            )}
                                         </div>
                                         <span className="hidden sm:block text-gray-700 text-sm font-medium">
                                             {user?.username || 'User'}
@@ -176,6 +189,39 @@ function Navbar() {
                                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z" />
                                                 </svg>
                                                 My Reviews
+                                            </Link>
+
+                                            <Link 
+                                                to="/my-equipment" 
+                                                className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 transition"
+                                                onClick={() => setShowProfileMenu(false)}
+                                            >
+                                                <svg className="w-5 h-5 mr-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 7h16M4 12h16M4 17h16" />
+                                                </svg>
+                                                My Equipment
+                                            </Link>
+
+                                            <Link 
+                                                to="/wishlist" 
+                                                className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 transition"
+                                                onClick={() => setShowProfileMenu(false)}
+                                            >
+                                                <svg className="w-5 h-5 mr-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                                                </svg>
+                                                My Wishlist
+                                            </Link>
+
+                                            <Link 
+                                                to="/my-messages" 
+                                                className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-blue-50 transition"
+                                                onClick={() => setShowProfileMenu(false)}
+                                            >
+                                                <svg className="w-5 h-5 mr-3 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4" />
+                                                </svg>
+                                                My Messages
                                             </Link>
 
                                             {user?.role === 'admin' && (
@@ -248,6 +294,20 @@ function Navbar() {
                             >
                                 Reviews
                             </Link>
+                            <Link 
+                                to="/contact" 
+                                className={`text-white text-sm font-medium hover:bg-blue-700 px-4 py-3 rounded-lg transition ${isActive('/contact') ? 'bg-blue-700' : ''}`}
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                Contact
+                            </Link>
+                            <Link 
+                                to="/equipment" 
+                                className={`text-white text-sm font-medium hover:bg-blue-700 px-4 py-3 rounded-lg transition ${isActive('/equipment') ? 'bg-blue-700' : ''}`}
+                                onClick={() => setIsMenuOpen(false)}
+                            >
+                                Equipment
+                            </Link>
                             {isAuthenticated && (
                                 <Link 
                                     to="/bookings" 
@@ -255,6 +315,15 @@ function Navbar() {
                                     onClick={() => setIsMenuOpen(false)}
                                 >
                                     My Bookings
+                                </Link>
+                            )}
+                            {isAuthenticated && (
+                                <Link 
+                                    to="/my-messages" 
+                                    className={`text-white text-sm font-medium hover:bg-blue-700 px-4 py-3 rounded-lg transition ${isActive('/my-messages') ? 'bg-blue-700' : ''}`}
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    My Messages
                                 </Link>
                             )}
                             
@@ -281,22 +350,17 @@ function Navbar() {
                 )}
             </div>
 
-            <style jsx>{`
-                @keyframes slide-down {
-                    from { opacity: 0; transform: translateY(-10px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-                @keyframes fade-in {
-                    from { opacity: 0; transform: translateY(-5px); }
-                    to { opacity: 1; transform: translateY(0); }
-                }
-                .animate-slide-down {
-                    animation: slide-down 0.3s ease-out;
-                }
-                .animate-fade-in {
-                    animation: fade-in 0.2s ease-out;
-                }
-            `}</style>
+            {/* Logout Confirmation Modal */}
+            <ConfirmModal
+                isOpen={showLogoutConfirm}
+                onClose={() => setShowLogoutConfirm(false)}
+                onConfirm={confirmLogout}
+                title="Logout"
+                message="Are you sure you want to logout?"
+                confirmText="Logout"
+                cancelText="Cancel"
+                type="warning"
+            />
         </nav>
     );
 }

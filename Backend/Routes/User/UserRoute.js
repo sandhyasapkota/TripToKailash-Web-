@@ -50,7 +50,7 @@ router.post('/login', loginUser);
 router.post('/forgot-password', forgotPassword);
 router.post('/reset-password', resetPassword);
 router.post('/verify-token', verifyTokenEndpoint);
-router.post('/verify-email', verifyEmail);
+router.get('/verify-email', verifyEmail);
 router.post('/resend-verification', resendVerificationEmail);
 
 // Admin routes

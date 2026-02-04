@@ -32,12 +32,22 @@ const Packages = lazy(() => import('./pages/public/Packages'));
 const ForgetPassword = lazy(() => import('./pages/public/ForgetPassword'));
 const ResetPassword = lazy(() => import('./pages/public/ResetPassword'));
 const VerifyEmail = lazy(() => import('./pages/public/VerifyEmail'));
+const Contact = lazy(() => import('./pages/public/Contact'));
+const About = lazy(() => import('./pages/public/About'));
+const Services = lazy(() => import('./pages/public/Services'));
+const PrivacyPolicy = lazy(() => import('./pages/public/PrivacyPolicy'));
+const TermsOfService = lazy(() => import('./pages/public/TermsOfService'));
+const CancellationPolicy = lazy(() => import('./pages/public/CancellationPolicy'));
+const Equipment = lazy(() => import('./pages/public/Equipment'));
 
 // Private pages
 const UserProfile = lazy(() => import("./pages/private/UserProfile"));
 const Booking = lazy(() => import("./pages/private/Booking"));
 const MyReview = lazy(() => import("./pages/private/MyReview"));
 const Reviews = lazy(() => import("./pages/private/Reviews"));
+const MyEquipmentPurchases = lazy(() => import("./pages/private/MyEquipmentPurchases"));
+const Wishlist = lazy(() => import("./pages/private/Wishlist"));
+const MyMessages = lazy(() => import("./pages/private/MyMessages"));
 
 // Admin pages
 const AdminDashboard = lazy(() => import('./Admin/AdminDashboard'));
@@ -45,6 +55,9 @@ const ManageUsers = lazy(() => import('./Admin/ManageUsers'));
 const ManagePackages = lazy(() => import('./Admin/ManagePackages'));
 const ManageBookings = lazy(() => import('./Admin/ManageBookings'));
 const ManageReviews = lazy(() => import('./Admin/ManageReviews'));
+const ManageEquipment = lazy(() => import('./Admin/ManageEquipment'));
+const ManageEquipmentPurchases = lazy(() => import('./Admin/ManageEquipmentPurchases'));
+const ManageContactMessages = lazy(() => import('./Admin/ManageContactMessages'));
 
 // Protected Route Component that checks auth on each render
 const ProtectedRoute = ({ children }) => {
@@ -132,6 +145,13 @@ function App() {
           <Route path="/packages" element={<Packages />} />
           <Route path="/view-details/:id" element={<ViewDetails />} />
           <Route path="/reviews" element={<Reviews />} />
+          <Route path="/contact" element={<Contact />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/services" element={<Services />} />
+          <Route path="/equipment" element={<Equipment />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/terms-of-service" element={<TermsOfService />} />
+          <Route path="/cancellation-policy" element={<CancellationPolicy />} />
           
           {/* 🔐 AUTH ROUTES - Only for NOT logged in users */}
           <Route path="/login" element={<AuthRoute><Login /></AuthRoute>} />
@@ -145,6 +165,9 @@ function App() {
           <Route path="/bookings" element={<ProtectedRoute><Booking /></ProtectedRoute>} />
           <Route path="/profile" element={<ProtectedRoute><UserProfile /></ProtectedRoute>} />
           <Route path="/my-reviews" element={<ProtectedRoute><MyReview /></ProtectedRoute>} />
+          <Route path="/my-equipment" element={<ProtectedRoute><MyEquipmentPurchases /></ProtectedRoute>} />
+          <Route path="/wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
+          <Route path="/my-messages" element={<ProtectedRoute><MyMessages /></ProtectedRoute>} />
 
           {/* 👨‍💼 ADMIN ROUTES - Require authentication and admin role */}
           <Route 
@@ -184,6 +207,30 @@ function App() {
             element={
               <AdminRoute>
                 <ManageReviews />
+              </AdminRoute>
+            }
+          />
+          <Route 
+            path="/admin/equipment" 
+            element={
+              <AdminRoute>
+                <ManageEquipment />
+              </AdminRoute>
+            }
+          />
+          <Route 
+            path="/admin/equipment-purchases" 
+            element={
+              <AdminRoute>
+                <ManageEquipmentPurchases />
+              </AdminRoute>
+            }
+          />
+          <Route 
+            path="/admin/messages" 
+            element={
+              <AdminRoute>
+                <ManageContactMessages />
               </AdminRoute>
             }
           />

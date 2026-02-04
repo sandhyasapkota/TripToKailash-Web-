@@ -1,26 +1,40 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import homepageImage from '../../Images/homepageimage.png';
+import { forgotPasswordSchema } from './schema/publicSchema';
 
 function ForgetPassword() {
     const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
     const [message, setMessage] = useState('');
     const [error, setError] = useState('');
+    const [fieldError, setFieldError] = useState('');
+
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
         setMessage('');
+        setFieldError('');
+
+        // Validate email with Zod using safeParse
+        const result = forgotPasswordSchema.safeParse({ email });
+        if (!result.success) {
+            const fieldError = result.error.flatten().fieldErrors.email?.[0] || 'Invalid email';
+            setFieldError(fieldError);
+            return;
+        }
+
         setLoading(true);
 
         try {
-            const response = await fetch('http://localhost:5000/api/users/forgot-password', {
+            const response = await fetch(`${API_URL}/api/users/forgot-password`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ email })
+                body: JSON.stringify({ email: email.trim().toLowerCase() })
             });
 
             const data = await response.json();
@@ -68,10 +82,16 @@ function ForgetPassword() {
                             name="email"
                             placeholder="Enter your registered email"
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            onChange={(e) => {
+                                setEmail(e.target.value);
+                                setFieldError('');
+                            }}
                             required
-                            className="w-full px-4 py-3 border border-gray-300 rounded-md text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                            className={`w-full px-4 py-3 border rounded-md text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent ${fieldError ? 'border-red-500' : 'border-gray-300'}`}
                         />
+                        {fieldError && (
+                            <p className="text-red-500 text-sm mt-1">{fieldError}</p>
+                        )}
                     </div>
 
                     {message && (
