@@ -1,4 +1,5 @@
 import { Product } from "../../Model/index.js";
+import { parsePagination, paginateArray } from "../../Utils/pagination.js";
 
 // Helper function to format product with price
 const formatProduct = (product) => {
@@ -50,29 +51,98 @@ const createProduct = async (req, res) => {
 
 const getAllProducts = async (req, res) => {
   try {
-    const { status, category } = req.query;
-    
-    // Build where clause for filtering
-    const whereClause = {};
-    if (status) whereClause.status = status;
-    if (category) whereClause.category = category;
-    
+    const { status, category, duration, q, minPrice, maxPrice, sortBy, sortDir } = req.query;
+    const { page, limit } = parsePagination(req.query);
+
     const products = await Product.findAll({
-      where: Object.keys(whereClause).length > 0 ? whereClause : undefined,
       order: [['createdAt', 'DESC']]
     });
+
+    let formattedProducts = products.map(formatProduct);
+
+    if (status) {
+      formattedProducts = formattedProducts.filter((p) => p.status === status);
+    }
+
+    if (category) {
+      formattedProducts = formattedProducts.filter((p) => p.category === category);
+    }
+
+    if (duration) {
+      formattedProducts = formattedProducts.filter((p) => p.duration === duration);
+    }
+
+    if (q && q.trim().length > 0) {
+      const query = q.trim().toLowerCase();
+      formattedProducts = formattedProducts.filter((p) => {
+        const name = (p.name || '').toLowerCase();
+        const description = (p.description || '').toLowerCase();
+        const productCategory = (p.category || '').toLowerCase();
+        return name.includes(query) || description.includes(query) || productCategory.includes(query);
+      });
+    }
+
+    if (minPrice !== undefined && !isNaN(parseFloat(minPrice))) {
+      const min = parseFloat(minPrice);
+      formattedProducts = formattedProducts.filter((p) => parseFloat(p.price) >= min);
+    }
+
+    if (maxPrice !== undefined && !isNaN(parseFloat(maxPrice))) {
+      const max = parseFloat(maxPrice);
+      formattedProducts = formattedProducts.filter((p) => parseFloat(p.price) <= max);
+    }
+
+    const allowedSortFields = ['createdAt', 'price', 'name'];
+    const sortField = allowedSortFields.includes(sortBy) ? sortBy : 'createdAt';
+    const sortDirection = sortDir === 'asc' ? 1 : -1;
+
+    formattedProducts.sort((a, b) => {
+      const aValue = a[sortField];
+      const bValue = b[sortField];
+      if (aValue == null && bValue == null) return 0;
+      if (aValue == null) return 1 * sortDirection;
+      if (bValue == null) return -1 * sortDirection;
+      if (sortField === 'name') {
+        return String(aValue).localeCompare(String(bValue)) * sortDirection;
+      }
+      if (sortField === 'price') {
+        return (parseFloat(aValue) - parseFloat(bValue)) * sortDirection;
+      }
+      return (new Date(aValue).getTime() - new Date(bValue).getTime()) * sortDirection;
+    });
     
-    // Format all products with proper price formatting
-    const formattedProducts = products.map(formatProduct);
+    const { items, meta } = paginateArray(formattedProducts, page, limit);
     
     res.status(200).json({ 
       message: "Packages retrieved successfully", 
-      products: formattedProducts,
-      count: formattedProducts.length
+      products: items,
+      count: items.length,
+      meta
     });
   } catch (error) {
     console.error('Get products error:', error);
     res.status(500).json({ error: "Failed to retrieve packages" });
+  }
+};
+
+const getProductCategories = async (req, res) => {
+  try {
+    const products = await Product.findAll();
+    const categories = [];
+    for (const product of products) {
+      if (product.category && !categories.includes(product.category)) {
+        categories.push(product.category);
+      }
+    }
+    categories.sort();
+
+    res.status(200).json({
+      message: "Categories retrieved successfully",
+      categories
+    });
+  } catch (error) {
+    console.error('Get categories error:', error);
+    res.status(500).json({ error: "Failed to retrieve categories" });
   }
 };
 
@@ -173,10 +243,28 @@ const deleteProduct = async (req, res) => {
   }
 };
 
+const uploadProductImage = async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No file uploaded" });
+    }
+    return res.status(200).json({
+      message: "Image uploaded successfully",
+      filename: req.file.filename,
+      image_url: `/uploads/product-images/${req.file.filename}`
+    });
+  } catch (error) {
+    console.error('Upload product image error:', error);
+    res.status(500).json({ error: "Failed to upload image" });
+  }
+};
+
 export {
   createProduct,
   getAllProducts,
+  getProductCategories,
   getProductById,
   updateProduct,
   deleteProduct,
+  uploadProductImage,
 };

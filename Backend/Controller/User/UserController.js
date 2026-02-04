@@ -4,13 +4,27 @@ import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 import { sendPasswordResetEmail, sendEmailVerificationEmail, sendWelcomeEmail } from '../../Utils/emailService.js';
 import nodemailer from 'nodemailer';
+import { parsePagination, paginateArray } from '../../Utils/pagination.js';
 
 const getAllUsers = async (req, res) => {
   try {
+    const { role, email } = req.query;
+    const { page, limit } = parsePagination(req.query);
     const users = await User.findAll({
       attributes: { exclude: ['password', 'resetToken', 'resetTokenExpiry', 'emailVerificationToken', 'emailVerificationExpiry'] }
     });
-    res.status(200).json({data: users, message: "Users fetched successfully"});
+
+    let filtered = users;
+    if (role) {
+      filtered = filtered.filter((user) => user.role === role);
+    }
+    if (email) {
+      const emailQuery = String(email).toLowerCase();
+      filtered = filtered.filter((user) => String(user.email).toLowerCase().includes(emailQuery));
+    }
+
+    const { items, meta } = paginateArray(filtered, page, limit);
+    res.status(200).json({data: items, message: "Users fetched successfully", meta});
   } catch (error) {
     res.status(500).json({ error: "Failed to fetch users" });
   }
@@ -31,24 +45,39 @@ const registerUser = async (req, res) => {
       return res.status(400).json({ error: "Full name must be at least 3 characters" });
     }
 
+    // Validate fullName only contains letters and spaces
+    if (!/^[a-zA-Z\s]+$/.test(fullName.trim())) {
+      return res.status(400).json({ error: "Full name can only contain letters and spaces" });
+    }
+
     // Validate email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(email)) {
       return res.status(400).json({ error: "Invalid email format" });
     }
 
-    // Validate phone (10 digits)
-    if (!/^\d{10}$/.test(phone)) {
-      return res.status(400).json({ error: "Phone number must be 10 digits" });
+    // Validate phone (10 digits or with country code format)
+    const phoneRegex = /^(\d{10}|(\+\d{1,3})?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})$/;
+    if (!phoneRegex.test(phone)) {
+      return res.status(400).json({ error: "Phone number must be 10 digits or include a valid country code" });
     }
 
     // Validate password length and strength
-    if (password.length < 6) {
-      return res.status(400).json({ error: "Password must be at least 6 characters" });
+    if (password.length < 8) {
+      return res.status(400).json({ error: "Password must be at least 8 characters" });
+    }
+    if (!/[A-Za-z]/.test(password)) {
+      return res.status(400).json({ error: "Password must contain at least one letter" });
+    }
+    if (!/[0-9]/.test(password)) {
+      return res.status(400).json({ error: "Password must contain at least one number" });
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(password)) {
+      return res.status(400).json({ error: "Password must contain at least one special character" });
     }
 
     // Check if user already exists
-    const existingUser = await User.findOne({ where: { email } });
+    const existingUser = await User.findOne({ where: { email: email.toLowerCase().trim() } });
     if (existingUser) {
       return res.status(400).json({ error: "User with this email already exists" });
     }
@@ -62,8 +91,8 @@ const registerUser = async (req, res) => {
 
     // Create new user
     const newUser = await User.create({ 
-      username: fullName, 
-      email: email, 
+      username: fullName.trim(), 
+      email: email.toLowerCase().trim(), 
       password: hashedPassword, 
       phone: phone,
       role: 'user',
@@ -267,6 +296,14 @@ const createUser = async (req, res) => {
     if (!body.username || !body.email) {
       return res.status(400).json({ error: "Username and Email are required" });
     }
+
+    if (body.role === 'admin') {
+      const existingAdmin = await User.findOne({ where: { role: 'admin' } });
+      if (existingAdmin) {
+        return res.status(400).json({ error: "Admin account already exists" });
+      }
+    }
+
     const newUser = await User.create({ username: body.username, email: body.email, password: body.password, role: body.role });
     res.status(201).json({ data: newUser, message: "User created successfully" });
   } catch (error) {
@@ -295,9 +332,51 @@ const updateUserById = async (req, res) => {
     if (!user) {
       return res.status(404).json({ error: "User not found" });
     }
+
+    // Validate username if provided
+    if (body.username) {
+      if (body.username.trim().length < 3) {
+        return res.status(400).json({ error: "Username must be at least 3 characters" });
+      }
+      if (!/^[a-zA-Z\s]+$/.test(body.username.trim())) {
+        return res.status(400).json({ error: "Username can only contain letters and spaces" });
+      }
+      body.username = body.username.trim();
+    }
+
+    // Validate email if provided
+    if (body.email) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(body.email)) {
+        return res.status(400).json({ error: "Invalid email format" });
+      }
+      // Check if email is already used by another user
+      const existingUser = await User.findOne({ where: { email: body.email.toLowerCase().trim() } });
+      if (existingUser && String(existingUser.id) !== String(userId)) {
+        return res.status(400).json({ error: "Email is already in use by another account" });
+      }
+      body.email = body.email.toLowerCase().trim();
+    }
+
+    // Validate phone if provided
+    if (body.phone) {
+      const phoneRegex = /^(\d{10}|(\+\d{1,3})?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4})$/;
+      if (!phoneRegex.test(body.phone)) {
+        return res.status(400).json({ error: "Phone number must be 10 digits or include a valid country code" });
+      }
+    }
+
+    if (body.role === 'admin' && user.role !== 'admin') {
+      const existingAdmin = await User.findOne({ where: { role: 'admin' } });
+      if (existingAdmin && String(existingAdmin.id) !== String(userId)) {
+        return res.status(400).json({ error: "Admin account already exists" });
+      }
+    }
+
     await user.update(body);
     res.status(200).json({ data: user, message: "User updated successfully" });
   } catch (error) {
+    console.error('Update user error:', error);
     res.status(500).json({ error: "Failed to update user" });
   }
 };
