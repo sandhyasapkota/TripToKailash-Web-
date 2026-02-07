@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(cookieParser());
 
 // Static uploads (product images, profile pictures, etc.)
-app.use('/uploads', express.static(path.join(process.cwd(), '..', 'uploads')));
+app.use('/uploads', express.static(path.join(process.cwd(), 'uploads')));
 
 // Basic security headers
 app.use((req, res, next) => {

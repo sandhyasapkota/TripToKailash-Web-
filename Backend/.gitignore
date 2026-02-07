@@ -29,6 +29,9 @@ build/
 # Coverage
 coverage/
 
+# Uploads (user-uploaded files)
+uploads/
+
 # Temporary files
 tmp/
 temp/

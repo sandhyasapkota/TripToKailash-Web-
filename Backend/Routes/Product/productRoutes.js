@@ -7,7 +7,7 @@ import { verifyToken, isAdmin } from '../../Middleware/authMiddleware.js';
 
 const router = express.Router();
 
-const productImageDir = path.join(process.cwd(), '..', 'uploads', 'product-images');
+const productImageDir = path.join(process.cwd(), 'uploads', 'product-images');
 if (!fs.existsSync(productImageDir)) {
   fs.mkdirSync(productImageDir, { recursive: true });
 }

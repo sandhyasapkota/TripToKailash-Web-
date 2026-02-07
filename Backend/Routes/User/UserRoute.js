@@ -21,7 +21,7 @@ import { verifyToken, isAdmin } from '../../Middleware/authMiddleware.js';
 // Configure multer for profile picture upload
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    const uploadPath = path.join(process.cwd(), '..', 'uploads', 'profile-pictures');
+    const uploadPath = path.join(process.cwd(), 'uploads', 'profile-pictures');
     cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
