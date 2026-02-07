@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '../contexts/ToastContext';
+import PageTransition from '../components/PageTransition';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 function ManageContactMessages() {
     const navigate = useNavigate();
@@ -37,10 +39,14 @@ function ManageContactMessages() {
                 return;
             }
 
-            if (response.ok) {
-                const data = await response.json();
-                setMessages(data.data || []);
+            if (!response.ok) {
+                const errData = await response.json().catch(() => ({}));
+                showError(errData.error || 'Failed to load messages');
+                return;
             }
+
+            const data = await response.json();
+            setMessages(data.data || []);
         } catch (error) {
             console.error('Error fetching messages:', error);
             showError('Failed to load messages');
@@ -198,29 +204,30 @@ function ManageContactMessages() {
     const unreadCount = messages.filter(m => m.status === 'unread').length;
 
     return (
+        <PageTransition>
         <div className="min-h-screen bg-gray-100">
             {/* Header */}
-            <div className="bg-gradient-to-r from-[#1a365d] via-[#2B4C8F] to-[#1a365d] text-white p-6 shadow-xl">
-                <div className="container mx-auto flex justify-between items-center">
-                    <div className="flex items-center gap-4">
+            <div className="bg-gradient-to-r from-[#1a365d] via-[#2B4C8F] to-[#1a365d] text-white p-4 sm:p-6 shadow-xl">
+                <div className="container mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div className="flex items-center gap-3 sm:gap-4">
                         <button
                             onClick={() => navigate('/admin/dashboard')}
                             className="text-white hover:text-gray-200 bg-white/10 p-2 rounded-lg hover:bg-white/20 transition-all"
                         >
-                            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                             </svg>
                         </button>
                         <div>
-                            <h1 className="text-2xl font-bold flex items-center gap-3">
+                            <h1 className="text-xl sm:text-2xl font-bold flex items-center gap-3">
                                 Contact Messages
                                 {unreadCount > 0 && (
-                                    <span className="bg-red-500 text-white text-sm px-3 py-1 rounded-full">
+                                    <span className="bg-red-500 text-white text-xs sm:text-sm px-2 py-0.5 sm:px-3 sm:py-1 rounded-full">
                                         {unreadCount} unread
                                     </span>
                                 )}
                             </h1>
-                            <p className="text-blue-200 text-sm">Manage messages from the contact form</p>
+                            <p className="text-blue-200 text-xs sm:text-sm">Manage messages from the contact form</p>
                         </div>
                     </div>
                     <button
@@ -228,9 +235,9 @@ function ManageContactMessages() {
                             localStorage.clear();
                             window.location.href = '/login';
                         }}
-                        className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-2"
+                        className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-4 py-2 sm:px-6 sm:py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-2 text-sm sm:text-base"
                     >
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
                         </svg>
                         Logout
@@ -241,7 +248,7 @@ function ManageContactMessages() {
             <div className="container mx-auto p-6">
 
             {/* Filters */}
-            <div className="mb-6 flex gap-2">
+            <div className="mb-6 flex flex-wrap gap-2">
                 {['all', 'unread', 'read', 'replied'].map((status) => (
                     <button
                         key={status}
@@ -259,9 +266,7 @@ function ManageContactMessages() {
 
             {/* Messages List */}
             {loading ? (
-                <div className="flex justify-center py-12">
-                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2B4C8F]"></div>
-                </div>
+                <LoadingSpinner size="md" text="Loading messages..." />
             ) : messages.length === 0 ? (
                 <div className="text-center py-12 bg-white rounded-xl shadow">
                     <svg className="w-16 h-16 mx-auto mb-4 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -523,6 +528,7 @@ function ManageContactMessages() {
             )}
             </div>
         </div>
+        </PageTransition>
     );
 }
 

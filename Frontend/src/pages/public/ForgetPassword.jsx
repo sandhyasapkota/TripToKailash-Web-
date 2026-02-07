@@ -2,27 +2,26 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import homepageImage from '../../Images/homepageimage.png';
 import { forgotPasswordSchema } from './schema/publicSchema';
+import { useToast } from '../../contexts/ToastContext';
+import PageTransition from '../../components/PageTransition';
 
 function ForgetPassword() {
+    const { showSuccess, showError } = useToast();
     const [email, setEmail] = useState('');
     const [loading, setLoading] = useState(false);
-    const [message, setMessage] = useState('');
-    const [error, setError] = useState('');
     const [fieldError, setFieldError] = useState('');
 
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        setError('');
-        setMessage('');
         setFieldError('');
 
         // Validate email with Zod using safeParse
         const result = forgotPasswordSchema.safeParse({ email });
         if (!result.success) {
-            const fieldError = result.error.flatten().fieldErrors.email?.[0] || 'Invalid email';
-            setFieldError(fieldError);
+            const validationError = result.error.flatten().fieldErrors.email?.[0] || 'Invalid email';
+            setFieldError(validationError);
             return;
         }
 
@@ -40,13 +39,13 @@ function ForgetPassword() {
             const data = await response.json();
 
             if (response.ok) {
-                setMessage('Password reset link has been sent to your email. Please check your inbox.');
+                showSuccess('Password reset link has been sent to your email. Please check your inbox.', 'Email Sent');
                 setEmail('');
             } else {
-                setError(data.error || 'Failed to send reset link');
+                showError(data.error || 'Failed to send reset link');
             }
         } catch (err) {
-            setError('Network error. Please try again.');
+            showError('Network error. Please try again.');
             console.error('Forgot password error:', err);
         } finally {
             setLoading(false);
@@ -54,6 +53,7 @@ function ForgetPassword() {
     };
 
     return (
+        <PageTransition>
         <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-gray-50 to-white">
             <div className="w-full max-w-md mx-4">
                 <div className="text-center mb-8">
@@ -94,18 +94,6 @@ function ForgetPassword() {
                         )}
                     </div>
 
-                    {message && (
-                        <div className="p-3 bg-green-100 border border-green-300 text-green-700 rounded-md text-sm text-center">
-                            {message}
-                        </div>
-                    )}
-
-                    {error && (
-                        <div className="p-3 bg-red-100 border border-red-300 text-red-700 rounded-md text-sm text-center">
-                            {error}
-                        </div>
-                    )}
-
                     <button
                         type="submit"
                         disabled={loading}
@@ -122,6 +110,7 @@ function ForgetPassword() {
                 </form>
             </div>
         </div>
+        </PageTransition>
     );
 }
 

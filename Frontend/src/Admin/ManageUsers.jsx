@@ -2,6 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useToast } from '../contexts/ToastContext';
 import ConfirmModal from '../components/ConfirmModal';
+import PageTransition from '../components/PageTransition';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 function ManageUsers() {
   const navigate = useNavigate();
@@ -166,19 +168,20 @@ function ManageUsers() {
   });
 
   return (
+    <PageTransition>
     <div className="min-h-screen bg-gray-100">
       {/* Header */}
-      <div className="bg-gradient-to-r from-[#1a365d] via-[#2B4C8F] to-[#1a365d] text-white p-6 shadow-xl">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-4">
+      <div className="bg-gradient-to-r from-[#1a365d] via-[#2B4C8F] to-[#1a365d] text-white p-4 sm:p-6 shadow-xl">
+        <div className="container mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <Link to="/admin/dashboard" className="text-white hover:text-gray-200 bg-white/10 p-2 rounded-lg hover:bg-white/20 transition-all">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </Link>
             <div>
-              <h1 className="text-2xl font-bold">Manage Users</h1>
-              <p className="text-blue-200 text-sm">View, edit and manage user accounts</p>
+              <h1 className="text-xl sm:text-2xl font-bold">Manage Users</h1>
+              <p className="text-blue-200 text-xs sm:text-sm">View, edit and manage user accounts</p>
             </div>
           </div>
           <button 
@@ -186,9 +189,9 @@ function ManageUsers() {
               localStorage.clear();
               window.location.href = '/login';
             }}
-            className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-2"
+            className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-4 py-2 sm:px-6 sm:py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-2 text-sm sm:text-base"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
             Logout
@@ -200,7 +203,7 @@ function ManageUsers() {
         {/* Stats and Actions Bar */}
         <div className="bg-white rounded-lg shadow p-4 mb-6">
           <div className="flex flex-wrap justify-between items-center gap-4">
-            <div className="flex gap-6">
+            <div className="flex flex-wrap gap-4 sm:gap-6">
               <div>
                 <p className="text-sm text-gray-500">Total Users</p>
                 <p className="text-2xl font-bold text-[#2B4C8F]">{users.length}</p>
@@ -255,9 +258,7 @@ function ManageUsers() {
         </div>
 
         {loading ? (
-          <div className="text-center py-10">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#2B4C8F] mx-auto"></div>
-          </div>
+          <LoadingSpinner size="md" text="Loading users..." />
         ) : (
           <div className="bg-white rounded-lg shadow overflow-hidden">
             <div className="overflow-x-auto">
@@ -469,6 +470,7 @@ function ManageUsers() {
         type="danger"
       />
     </div>
+    </PageTransition>
   );
 }
 

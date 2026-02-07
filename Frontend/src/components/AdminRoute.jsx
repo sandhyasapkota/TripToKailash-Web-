@@ -8,7 +8,7 @@ function AdminRoute({ children }) {
     try {
       const parsed = JSON.parse(user);
       isAdmin = parsed.role === 'admin';
-    } catch (_) {
+    } catch {
       isAdmin = false;
     }
   }

@@ -3,6 +3,8 @@ import { Link } from 'react-router-dom';
 import { useToast } from '../contexts/ToastContext';
 import { packageSchema } from './schema/adminSchema';
 import ConfirmModal from '../components/ConfirmModal';
+import PageTransition from '../components/PageTransition';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 function ManageEquipment() {
   const { showSuccess, showError } = useToast();
@@ -191,18 +193,19 @@ function ManageEquipment() {
   };
 
   return (
+    <PageTransition>
     <div className="min-h-screen bg-gray-100">
-      <div className="bg-gradient-to-r from-[#1a365d] via-[#2B4C8F] to-[#1a365d] text-white p-6 shadow-xl">
-        <div className="container mx-auto flex justify-between items-center">
-          <div className="flex items-center gap-4">
+      <div className="bg-gradient-to-r from-[#1a365d] via-[#2B4C8F] to-[#1a365d] text-white p-4 sm:p-6 shadow-xl">
+        <div className="container mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div className="flex items-center gap-3 sm:gap-4">
             <Link to="/admin/dashboard" className="text-white hover:text-gray-200 bg-white/10 p-2 rounded-lg hover:bg-white/20 transition-all">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
             </Link>
             <div>
-              <h1 className="text-2xl font-bold">Manage Equipment</h1>
-              <p className="text-blue-200 text-sm">Add, edit and manage equipment inventory</p>
+              <h1 className="text-xl sm:text-2xl font-bold">Manage Equipment</h1>
+              <p className="text-blue-200 text-xs sm:text-sm">Add, edit and manage equipment inventory</p>
             </div>
           </div>
           <button
@@ -210,9 +213,9 @@ function ManageEquipment() {
               localStorage.clear();
               window.location.href = '/login';
             }}
-            className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-2"
+            className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-4 py-2 sm:px-6 sm:py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl flex items-center gap-2 text-sm sm:text-base"
           >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
             </svg>
             Logout
@@ -241,17 +244,15 @@ function ManageEquipment() {
         </div>
 
         {loading ? (
-          <div className="text-center py-20">
-            <div className="animate-spin rounded-full h-16 w-16 border-b-2 border-[#2B4C8F] mx-auto"></div>
-            <p className="mt-4 text-gray-600">Loading equipment...</p>
-          </div>
+          <LoadingSpinner size="lg" text="Loading equipment..." />
         ) : items.length === 0 ? (
           <div className="p-8 text-center text-gray-500 bg-white rounded-lg shadow">
             No equipment found.
           </div>
         ) : (
           <div className="bg-white rounded-lg shadow overflow-hidden">
-            <table className="w-full">
+            <div className="overflow-x-auto">
+            <table className="min-w-full">
               <thead className="bg-gray-50 border-b">
                 <tr>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">ID</th>
@@ -329,6 +330,7 @@ function ManageEquipment() {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         )}
       </div>
@@ -395,6 +397,7 @@ function ManageEquipment() {
         type="danger"
       />
     </div>
+    </PageTransition>
   );
 }
 

@@ -15,6 +15,7 @@ import {
   Filler
 } from 'chart.js';
 import { useToast } from '../contexts/ToastContext';
+import PageTransition from '../components/PageTransition';
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, BarElement, ArcElement, Title, Tooltip, Legend, Filler);
 
@@ -382,22 +383,23 @@ function AdminDashboard() {
   };
 
   return (
+    <PageTransition>
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-100">
       {/* Modern Admin Header */}
       <div className="bg-gradient-to-r from-indigo-600 via-purple-600 to-blue-600 text-white shadow-2xl">
-        <div className="container mx-auto px-6 py-4">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center space-x-4">
-              <div className="bg-white/20 p-3 rounded-xl backdrop-blur-sm">
-                <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="container mx-auto px-4 sm:px-6 py-4">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div className="flex items-center space-x-3 sm:space-x-4">
+              <div className="bg-white/20 p-2 sm:p-3 rounded-xl backdrop-blur-sm">
+                <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
               </div>
               <div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
+                <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
                   Admin Dashboard
                 </h1>
-                <p className="text-indigo-200 text-sm">Welcome back! Here's your platform overview</p>
+                <p className="text-indigo-200 text-xs sm:text-sm">Welcome back! Here's your platform overview</p>
               </div>
             </div>
             <button
@@ -405,9 +407,9 @@ function AdminDashboard() {
                 localStorage.clear();
                 window.location.href = '/login';
               }}
-              className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-6 py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl"
+              className="bg-white/20 hover:bg-white/30 backdrop-blur-sm text-white px-4 py-2 sm:px-6 sm:py-3 rounded-xl font-semibold transition-all duration-300 hover:scale-105 shadow-lg hover:shadow-xl text-sm sm:text-base"
             >
-              <svg className="w-5 h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 inline mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
               </svg>
               Logout
@@ -416,9 +418,9 @@ function AdminDashboard() {
         </div>
       </div>
 
-      <div className="container mx-auto px-6 py-8">
+      <div className="container mx-auto px-4 sm:px-6 py-8">
         {/* Enhanced Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-6 mb-10">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
           <div className="group bg-gradient-to-br from-blue-500 to-blue-600 p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 cursor-pointer">
             <div className="flex items-center justify-between">
               <div>
@@ -519,7 +521,7 @@ function AdminDashboard() {
             </svg>
             Management Center
           </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
             <Link to="/admin/users" className="group bg-white p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:scale-105 border border-gray-100">
               <div className="flex items-center mb-4">
                 <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-3 rounded-xl mr-4 group-hover:scale-110 transition-transform">
@@ -801,7 +803,7 @@ function AdminDashboard() {
               <div className="h-80 mb-6">
                 <Doughnut data={bookingStatusData} options={bookingStatusOptions} />
               </div>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                 <div className="bg-yellow-50 p-3 rounded-lg text-center border border-yellow-200">
                   <p className="text-xl font-bold text-yellow-600">{stats.bookingStats?.pending || 0}</p>
                   <p className="text-xs text-yellow-700">Pending</p>
@@ -916,6 +918,7 @@ function AdminDashboard() {
         </div>
       </div>
     </div>
+    </PageTransition>
   );
 }
 

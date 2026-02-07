@@ -61,7 +61,7 @@ function Footer() {
             {/* Main Footer Content */}
             <div className="bg-gray-900 text-gray-300 py-12">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6">
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                         {/* About Section */}
                         <div>
                             <img src={logo} alt="TripToKailash" className="h-16 w-auto mb-4" />
@@ -102,18 +102,18 @@ function Footer() {
                         <div className="w-full">
                             <h3 className="text-white text-lg font-bold mb-4">Subscribe to our Newsletter</h3>
                             <p className="text-sm mb-4">Stay updated with our latest offers and news</p>
-                            <form className="flex max-w-[220px]" action="#" method="POST">
+                            <form className="flex w-full max-w-xs" action="#" method="POST">
                                 <input 
                                     type="email" 
                                     name="email" 
                                     id="email" 
                                     placeholder="Your email" 
-                                    className="w-32 px-2 py-2 rounded-l-md text-gray-900 border-0 focus:outline-none focus:ring-2 focus:ring-blue-500 text-xs" 
+                                    className="flex-1 min-w-0 px-3 py-2 rounded-l-md text-gray-900 border-0 focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm" 
                                     required 
                                 />
                                 <button 
                                     type="submit" 
-                                    className="px-5 py-2 rounded-r-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition whitespace-nowrap text-xs"
+                                    className="px-4 py-2 rounded-r-md bg-blue-600 text-white font-semibold hover:bg-blue-700 transition whitespace-nowrap text-sm"
                                 >
                                     Subscribe
                                 </button>

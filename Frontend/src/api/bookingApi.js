@@ -17,7 +17,7 @@ const getAuthHeaders = () => {
 
 // Get all user's bookings
 export const getUserBookings = async () => {
-  const res = await fetch(`${BOOKING_API_URL}/my-bookings`, {
+  const res = await fetch(`${BOOKING_API_URL}/user`, {
     headers: getAuthHeaders(),
   });
   return res.json();
@@ -54,7 +54,7 @@ export const updateBooking = async (id, bookingData) => {
 // Cancel booking
 export const cancelBooking = async (id) => {
   const res = await fetch(`${BOOKING_API_URL}/${id}/cancel`, {
-    method: 'PATCH',
+    method: 'PUT',
     headers: getAuthHeaders(),
   });
   return res.json();

@@ -14,6 +14,8 @@ function Navbar() {
     const [user, setUser] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+    const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
     useEffect(() => {
         const checkAuth = () => {
             const token = localStorage.getItem('token');
@@ -135,7 +137,7 @@ function Navbar() {
                                         <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-semibold overflow-hidden">
                                             {user?.profilePicture ? (
                                                 <img 
-                                                    src={`http://localhost:5000/uploads/profile-pictures/${user.profilePicture}`} 
+                                                    src={`${API_URL}/uploads/profile-pictures/${user.profilePicture}`} 
                                                     alt="Profile" 
                                                     className="w-full h-full object-cover rounded-full"
                                                 />
