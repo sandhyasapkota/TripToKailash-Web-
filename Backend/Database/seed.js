@@ -13,16 +13,15 @@ const seedData = async () => {
     console.log("Starting database seeding...");
     await sequelize.authenticate();
     
-    // Clear existing data in reverse order of dependencies
-    await WishlistItem.destroy({ where: {}, truncate: true, cascade: true });
-    await ContactMessage.destroy({ where: {}, truncate: true, cascade: true });
-    await EquipmentPurchase.destroy({ where: {}, truncate: true, cascade: true });
-    await Review.destroy({ where: {}, truncate: true, cascade: true });
-    await Booking.destroy({ where: {}, truncate: true, cascade: true });
-    await Product.destroy({ where: {}, truncate: true, cascade: true });
-    await User.destroy({ where: {}, truncate: true, cascade: true });
+    // Check if data already exists — skip seeding to protect existing data
+    const existingUsers = await User.count();
+    if (existingUsers > 0) {
+      console.log("⚠️  Database already has data. Skipping seed to protect existing records.");
+      console.log("   To force re-seed, run: npm run seed:reset");
+      return;
+    }
     
-    console.log("✅ Cleared existing data");
+    console.log("Database is empty. Inserting seed data...");
 
     // Admin + Users
     const adminUsers = [
@@ -91,7 +90,7 @@ const seedData = async () => {
         stock_quantity: 25,
         category_id: 1,
         brand_id: 1,
-        image_url: null,
+        image_url: "https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?w=800&h=500&fit=crop",
         status: "active",
       },
       {
@@ -103,7 +102,7 @@ const seedData = async () => {
         stock_quantity: 18,
         category_id: 1,
         brand_id: 1,
-        image_url: null,
+        image_url: "https://images.unsplash.com/photo-1585409677983-0f6c41ca9c3b?w=800&h=500&fit=crop",
         status: "active",
       },
       {
@@ -115,7 +114,7 @@ const seedData = async () => {
         stock_quantity: 30,
         category_id: 2,
         brand_id: 1,
-        image_url: null,
+        image_url: "https://images.unsplash.com/photo-1544735716-392fe2489ffa?w=800&h=500&fit=crop",
         status: "active",
       },
       {
@@ -127,7 +126,7 @@ const seedData = async () => {
         stock_quantity: 40,
         category_id: 2,
         brand_id: 1,
-        image_url: null,
+        image_url: "https://images.unsplash.com/photo-1486911278844-a81c5267e227?w=800&h=500&fit=crop",
         status: "active",
       },
       {
@@ -139,7 +138,7 @@ const seedData = async () => {
         stock_quantity: 35,
         category_id: 3,
         brand_id: 1,
-        image_url: null,
+        image_url: "https://images.unsplash.com/photo-1558799401-1dcba79834c2?w=800&h=500&fit=crop",
         status: "active",
       },
       {
@@ -151,7 +150,7 @@ const seedData = async () => {
         stock_quantity: 50,
         category_id: 3,
         brand_id: 1,
-        image_url: null,
+        image_url: "https://images.unsplash.com/photo-1609920658906-8223bd289001?w=800&h=500&fit=crop",
         status: "active",
       },
       {
@@ -163,7 +162,7 @@ const seedData = async () => {
         stock_quantity: 20,
         category_id: 4,
         brand_id: 1,
-        image_url: null,
+        image_url: "https://images.unsplash.com/photo-1567591370504-b8ac5c4d1654?w=800&h=500&fit=crop",
         status: "active",
       },
       {
@@ -175,7 +174,7 @@ const seedData = async () => {
         stock_quantity: 16,
         category_id: 2,
         brand_id: 1,
-        image_url: null,
+        image_url: "https://images.unsplash.com/photo-1526772662000-3f88f10405a6?w=800&h=500&fit=crop",
         status: "active",
       },
       // Equipment items
@@ -188,7 +187,7 @@ const seedData = async () => {
         stock_quantity: 100,
         category_id: 6,
         brand_id: 1,
-        image_url: null,
+        image_url: "https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?w=600&h=400&fit=crop",
         status: "active",
       },
       {
@@ -200,7 +199,7 @@ const seedData = async () => {
         stock_quantity: 80,
         category_id: 6,
         brand_id: 1,
-        image_url: null,
+        image_url: "https://images.unsplash.com/photo-1510672981848-a1c4f1cb5ccf?w=600&h=400&fit=crop",
         status: "active",
       },
       {
@@ -212,7 +211,7 @@ const seedData = async () => {
         stock_quantity: 120,
         category_id: 6,
         brand_id: 1,
-        image_url: null,
+        image_url: "https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=600&h=400&fit=crop",
         status: "active",
       },
       {
@@ -224,7 +223,7 @@ const seedData = async () => {
         stock_quantity: 200,
         category_id: 6,
         brand_id: 1,
-        image_url: null,
+        image_url: "https://images.unsplash.com/photo-1602143407151-7111542de6e8?w=600&h=400&fit=crop",
         status: "active",
       },
       {
@@ -236,7 +235,7 @@ const seedData = async () => {
         stock_quantity: 150,
         category_id: 6,
         brand_id: 1,
-        image_url: null,
+        image_url: "https://images.unsplash.com/photo-1551632811-561732d1e306?w=600&h=400&fit=crop",
         status: "active",
       },
       {
@@ -248,7 +247,7 @@ const seedData = async () => {
         stock_quantity: 180,
         category_id: 6,
         brand_id: 1,
-        image_url: null,
+        image_url: "https://images.unsplash.com/photo-1603398938378-e54eab446dde?w=600&h=400&fit=crop",
         status: "active",
       },
       {
@@ -260,7 +259,7 @@ const seedData = async () => {
         stock_quantity: 120,
         category_id: 6,
         brand_id: 1,
-        image_url: null,
+        image_url: "https://images.unsplash.com/photo-1622260614153-03223fb72052?w=600&h=400&fit=crop",
         status: "active",
       },
       {
@@ -272,7 +271,7 @@ const seedData = async () => {
         stock_quantity: 220,
         category_id: 6,
         brand_id: 1,
-        image_url: null,
+        image_url: "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce?w=600&h=400&fit=crop",
         status: "active",
       },
     ];
@@ -369,9 +368,35 @@ const seedData = async () => {
   }
 };
 
-const runSeed = async () => {
+const resetAndSeed = async () => {
   try {
+    console.log("⚠️  Force re-seeding: clearing ALL existing data...");
+    await sequelize.authenticate();
+
+    await WishlistItem.destroy({ where: {}, truncate: true, cascade: true });
+    await ContactMessage.destroy({ where: {}, truncate: true, cascade: true });
+    await EquipmentPurchase.destroy({ where: {}, truncate: true, cascade: true });
+    await Review.destroy({ where: {}, truncate: true, cascade: true });
+    await Booking.destroy({ where: {}, truncate: true, cascade: true });
+    await Product.destroy({ where: {}, truncate: true, cascade: true });
+    await User.destroy({ where: {}, truncate: true, cascade: true });
+    console.log("✅ Cleared existing data");
+
     await seedData();
+  } catch (error) {
+    console.error("❌ Reset & seed failed:", error);
+    throw error;
+  }
+};
+
+const runSeed = async () => {
+  const isReset = process.argv.includes("--reset");
+  try {
+    if (isReset) {
+      await resetAndSeed();
+    } else {
+      await seedData();
+    }
     console.log("✅ Seeding process completed. Closing database connection...");
     await sequelize.close();
     process.exit(0);
@@ -382,7 +407,7 @@ const runSeed = async () => {
   }
 };
 
-export { seedData };
+export { seedData, resetAndSeed };
 
 // Run seed directly when file is executed
 runSeed();

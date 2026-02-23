@@ -20,7 +20,7 @@ function Signup() {
     const [errors, setErrors] = useState({});
     const [loading, setLoading] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
-    const [ setFieldTouched] = useState({});
+    const [_fieldTouched, setFieldTouched] = useState({});
 
     const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
 

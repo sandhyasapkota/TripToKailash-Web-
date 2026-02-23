@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import Navbar from '../../components/navbar';
 import Footer from '../../components/Footer';
 import PageTransition from '../../components/PageTransition';
@@ -195,15 +194,10 @@ function Packages() {
                 </div>
 
                 {/* Category Tabs */}
-                <motion.div 
-                    className="mb-8 overflow-x-auto"
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.2 }}
-                >
+                <div className="mb-8 overflow-x-auto">
                     <div className="flex gap-3 justify-center min-w-max px-4">
-                        {categories.map((category, index) => (
-                            <motion.button
+                        {categories.map((category) => (
+                            <button
                                 key={category}
                                 onClick={() => setActiveCategory(category)}
                                 className={`px-6 py-3 rounded-full font-medium transition whitespace-nowrap ${
@@ -211,17 +205,12 @@ function Packages() {
                                         ? 'bg-[#2B4C8F] text-white shadow-lg'
                                         : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
                                 }`}
-                                whileHover={{ scale: 1.05 }}
-                                whileTap={{ scale: 0.95 }}
-                                initial={{ opacity: 0, x: -20 }}
-                                animate={{ opacity: 1, x: 0 }}
-                                transition={{ delay: index * 0.05 }}
                             >
                                 {category}
-                            </motion.button>
+                            </button>
                         ))}
                     </div>
-                </motion.div>
+                </div>
 
                 {/* Packages Grid */}
                 {loading ? (
@@ -235,58 +224,32 @@ function Packages() {
                         <p className="text-gray-500 mt-2">Try adjusting your search or category filter</p>
                     </div>
                 ) : (
-                    <motion.div 
-                        className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"
-                        variants={{
-                            hidden: { opacity: 0 },
-                            visible: {
-                                opacity: 1,
-                                transition: {
-                                    staggerChildren: 0.1,
-                                    delayChildren: 0.2
-                                }
-                            }
-                        }}
-                        initial="hidden"
-                        animate="visible"
-                    >
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
                         {filteredPackages.map((pkg) => (
-                            <motion.div 
+                            <div 
                                 key={pkg.id} 
-                                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition transform hover:-translate-y-2"
-                                variants={{
-                                    hidden: { opacity: 0, y: 20 },
-                                    visible: {
-                                        opacity: 1,
-                                        y: 0,
-                                        transition: { duration: 0.5 }
-                                    }
-                                }}
-                                whileHover={{ y: -8, transition: { duration: 0.2 } }}
+                                className="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-300 hover:-translate-y-2"
                             >
                                 <div className="relative h-56 overflow-hidden">
-                                    <motion.img 
+                                    <img 
                                         src={pkg.image} 
                                         alt={pkg.title}
-                                        className="w-full h-full object-cover"
+                                        className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                                        loading="lazy"
                                         onError={(e) => {
                                             e.target.src = homepageImage;
                                         }}
-                                        whileHover={{ scale: 1.1 }}
-                                        transition={{ duration: 0.3 }}
                                     />
                                     <div className="absolute top-4 right-4 bg-white px-4 py-2 rounded-full shadow-md">
                                         <span className="text-[#2B4C8F] font-bold">{pkg.price}</span>
                                     </div>
                                     {/* Wishlist Heart Button */}
-                                    <motion.button
+                                    <button
                                         onClick={(e) => {
                                             e.stopPropagation();
                                             toggleWishlist(pkg.id);
                                         }}
-                                        className="absolute top-4 left-1/2 -translate-x-1/2 bg-white/90 hover:bg-white p-2 rounded-full shadow-md z-10"
-                                        whileHover={{ scale: 1.1 }}
-                                        whileTap={{ scale: 0.9 }}
+                                        className="absolute top-4 left-4 bg-white/90 hover:bg-white p-2 rounded-full shadow-md z-10 transition-transform hover:scale-110 active:scale-90"
                                         title={wishlistIds.includes(pkg.id) ? 'Remove from wishlist' : 'Add to wishlist'}
                                     >
                                         <svg 
@@ -297,15 +260,10 @@ function Packages() {
                                         >
                                             <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                         </svg>
-                                    </motion.button>
-                                    <motion.div 
-                                        className="absolute top-4 left-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium shadow-md"
-                                        initial={{ opacity: 0, x: -10 }}
-                                        animate={{ opacity: 1, x: 0 }}
-                                        transition={{ delay: 0.3 }}
-                                    >
+                                    </button>
+                                    <div className="absolute top-14 left-4 bg-green-500 text-white px-3 py-1 rounded-full text-sm font-medium shadow-md">
                                         {pkg.slots > 0 ? `${pkg.slots} slots available` : 'Sold out'}
-                                    </motion.div>
+                                    </div>
                                 </div>
                                 
                                 <div className="p-6">
@@ -320,10 +278,8 @@ function Packages() {
                                     
                                     <div className="flex items-center justify-between mb-4">
                                         <div className="flex items-center gap-2">
-                                            <motion.div 
+                                            <div 
                                                 className={`w-3 h-3 rounded-full ${pkg.slots > 10 ? 'bg-green-500' : pkg.slots > 0 ? 'bg-yellow-500' : 'bg-red-500'}`}
-                                                animate={{ scale: [1, 1.2, 1] }}
-                                                transition={{ duration: 2, repeat: Infinity }}
                                             />
                                             <span className="text-sm text-gray-600">
                                                 {pkg.slots > 10 ? 'High availability' : pkg.slots > 0 ? 'Limited slots' : 'Sold out'}
@@ -336,24 +292,22 @@ function Packages() {
                                         <span className="inline-block px-3 py-1 bg-blue-100 text-[#2B4C8F] text-sm rounded-full">
                                             {pkg.category}
                                         </span>
-                                        <motion.button
+                                        <button
                                             onClick={() => handleViewDetails(pkg.id)}
                                             disabled={pkg.slots === 0}
                                             className={`px-6 py-2 rounded-full font-medium transition ${
                                                 pkg.slots === 0 
                                                     ? 'bg-gray-400 text-gray-200 cursor-not-allowed' 
-                                                    : 'bg-[#2B4C8F] text-white hover:bg-blue-700'
+                                                    : 'bg-[#2B4C8F] text-white hover:bg-blue-700 hover:scale-105 active:scale-95'
                                             }`}
-                                            whileHover={pkg.slots > 0 ? { scale: 1.05 } : {}}
-                                            whileTap={pkg.slots > 0 ? { scale: 0.95 } : {}}
                                         >
                                             {pkg.slots === 0 ? 'Sold Out' : 'View Details'}
-                                        </motion.button>
+                                        </button>
                                     </div>
                                 </div>
-                            </motion.div>
+                            </div>
                         ))}
-                    </motion.div>
+                    </div>
                 )}
             </div>
 

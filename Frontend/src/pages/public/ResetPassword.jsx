@@ -3,6 +3,8 @@ import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import homepageImage from '../../Images/homepageimage.png';
 import { useToast } from '../../contexts/ToastContext';
 import { resetPasswordSchema } from './schema/publicSchema';
+import Navbar from '../../components/navbar';
+import Footer from '../../components/Footer';
 import PageTransition from '../../components/PageTransition';
 
 function ResetPassword() {
@@ -105,24 +107,35 @@ function ResetPassword() {
 
     return (
         <PageTransition>
-        <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-gray-50 to-white">
-            <div className="w-full max-w-md mx-4">
+        <div className="min-h-screen flex flex-col bg-gradient-to-br from-blue-50 via-white to-blue-50">
+            <Navbar />
+            <div className="flex-grow flex justify-center items-center px-4 py-8">
+            <div className="w-full max-w-md">
+                {/* Logo/Brand Section */}
                 <div className="text-center mb-8">
-                    <h2 className="text-[#2B4C8F] text-xl font-semibold mb-6">TripToKailash</h2>
-                    <div className="mb-6">
-                        <img 
-                            src={homepageImage} 
-                            alt="Mountain" 
-                            className="w-full h-32 object-cover rounded-t-lg opacity-80"
-                        />
-                    </div>
-                    <h1 className="text-[#2B4C8F] text-3xl font-bold">Reset Password</h1>
-                    <p className="text-gray-600 text-sm mt-2">
+                    <Link to="/" className="inline-block">
+                        <h2 className="text-[#2B4C8F] text-2xl font-bold mb-2 hover:text-blue-700 transition">TripToKailash</h2>
+                    </Link>
+                    <p className="text-gray-600 text-sm">Your spiritual journey begins here</p>
+                </div>
+
+                {/* Mountain Image */}
+                <div className="mb-6 rounded-xl overflow-hidden shadow-lg">
+                    <img 
+                        src={homepageImage} 
+                        alt="Mount Kailash" 
+                        className="w-full h-40 object-cover"
+                    />
+                </div>
+
+                <div className="text-center mb-6">
+                    <h1 className="text-[#2B4C8F] text-3xl font-bold mb-2">Reset Password</h1>
+                    <p className="text-gray-600 text-sm">
                         Enter your new password below
                     </p>
                 </div>
                 
-                <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow-md p-8 space-y-5">
+                <form onSubmit={handleSubmit} className="bg-white rounded-2xl shadow-xl p-8 space-y-5 border border-gray-100">
                     <div>
                         <label htmlFor="password" className="block text-gray-700 text-sm font-medium mb-2">
                             New Password
@@ -200,12 +213,43 @@ function ResetPassword() {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full py-3 bg-[#2B4C8F] text-white font-semibold rounded-md hover:bg-blue-800 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full py-3.5 bg-[#2B4C8F] text-white font-semibold rounded-lg hover:bg-blue-800 transition transform hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed disabled:scale-100 shadow-lg hover:shadow-xl"
                     >
-                        {loading ? 'Resetting...' : 'Reset Password'}
+                        {loading ? (
+                            <span className="flex items-center justify-center">
+                                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                Resetting...
+                            </span>
+                        ) : (
+                            'Reset Password'
+                        )}
                     </button>
+
+                    {/* Back to Login */}
+                    <div className="relative my-6">
+                        <div className="absolute inset-0 flex items-center">
+                            <div className="w-full border-t border-gray-300"></div>
+                        </div>
+                        <div className="relative flex justify-center text-sm">
+                            <span className="px-4 bg-white text-gray-500">Done resetting?</span>
+                        </div>
+                    </div>
+
+                    <div className="text-center">
+                        <Link 
+                            to="/login" 
+                            className="inline-block w-full py-3 px-4 border-2 border-[#2B4C8F] text-[#2B4C8F] font-semibold rounded-lg hover:bg-blue-50 transition transform hover:scale-[1.02]"
+                        >
+                            Back to Login
+                        </Link>
+                    </div>
                 </form>
             </div>
+            </div>
+            <Footer />
         </div>
         </PageTransition>
     );

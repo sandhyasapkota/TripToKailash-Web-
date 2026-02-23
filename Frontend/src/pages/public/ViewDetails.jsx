@@ -818,6 +818,7 @@ function ViewDetails() {
                                     ))}
                                 </div>
                                 {reviewForm.rating === 0 && <p className="text-red-500 text-xs mt-1">Please select a rating</p>}
+                                {reviewErrors.rating && <p className="text-red-500 text-xs mt-1">{reviewErrors.rating}</p>}
                             </div>
                             
                             <div className="mb-4">
@@ -826,10 +827,11 @@ function ViewDetails() {
                                     type="text"
                                     value={reviewForm.title}
                                     onChange={(e) => setReviewForm({...reviewForm, title: e.target.value})}
-                                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2B4C8F]"
-                                    placeholder="Sum up your experience"
+                                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2B4C8F] ${reviewErrors.title ? 'border-red-500' : ''}`}
+                                    placeholder="Sum up your experience (min 5 characters)"
                                     required
                                 />
+                                {reviewErrors.title && <p className="text-red-500 text-xs mt-1">{reviewErrors.title}</p>}
                             </div>
                             
                             <div className="mb-4">
@@ -837,11 +839,12 @@ function ViewDetails() {
                                 <textarea
                                     value={reviewForm.comment}
                                     onChange={(e) => setReviewForm({...reviewForm, comment: e.target.value})}
-                                    className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2B4C8F]"
+                                    className={`w-full px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#2B4C8F] ${reviewErrors.comment ? 'border-red-500' : ''}`}
                                     rows="4"
-                                    placeholder="Share your experience with this journey..."
+                                    placeholder="Share your experience with this journey... (min 20 characters)"
                                     required
                                 ></textarea>
+                                {reviewErrors.comment && <p className="text-red-500 text-xs mt-1">{reviewErrors.comment}</p>}
                             </div>
                             
                             <div className="flex gap-2">

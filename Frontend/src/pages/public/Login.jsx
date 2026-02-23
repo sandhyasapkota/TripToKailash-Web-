@@ -122,7 +122,7 @@ function Login() {
         setNeedsVerification(false);
 
         try {
-            const response = await fetch(`${API_URL}/users/login`, {
+            const response = await fetch(`${API_URL}/api/users/login`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({

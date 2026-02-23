@@ -310,55 +310,30 @@ function HomePage() {
                         </div>
                     ) : (
                         <>
-                            <motion.div 
-                                className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12"
-                                variants={{
-                                    hidden: { opacity: 0 },
-                                    visible: {
-                                        opacity: 1,
-                                        transition: {
-                                            staggerChildren: 0.1,
-                                            delayChildren: 0.2
-                                        }
-                                    }
-                                }}
-                                initial="hidden"
-                                animate="visible"
-                            >
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
                                 {filteredPackages.slice(0, 6).map((pkg) => (
-                                    <motion.div
+                                    <div
                                         key={pkg.id}
-                                        variants={{
-                                            hidden: { opacity: 0, y: 20 },
-                                            visible: {
-                                                opacity: 1,
-                                                y: 0,
-                                                transition: { duration: 0.5 }
-                                            }
-                                        }}
-                                        whileHover={{ y: -5, transition: { duration: 0.2 } }}
+                                        className="hover:-translate-y-1 transition-transform duration-300"
                                     >
                                         <Card className="overflow-hidden p-0 hover:shadow-2xl transition-shadow">
-                                            <div className="relative">
-                                                <motion.img 
+                                            <div className="relative overflow-hidden">
+                                                <img 
                                                     src={pkg.image} 
                                                     alt={pkg.title}
-                                                    className="w-full h-56 object-cover"
-                                                    whileHover={{ scale: 1.05 }}
-                                                    transition={{ duration: 0.3 }}
+                                                    className="w-full h-56 object-cover hover:scale-105 transition-transform duration-300"
+                                                    loading="lazy"
                                                 />
                                                 <div className="absolute top-4 right-4 bg-white px-3 py-1 rounded-full shadow-lg">
                                                     <span className="text-[#2B4C8F] font-bold">{pkg.price}</span>
                                                 </div>
                                                 {/* Wishlist Heart Button */}
-                                                <motion.button
+                                                <button
                                                     onClick={(e) => {
                                                         e.stopPropagation();
                                                         toggleWishlist(pkg.id);
                                                     }}
-                                                    className="absolute top-4 left-4 bg-white/90 hover:bg-white p-2 rounded-full shadow-md z-10"
-                                                    whileHover={{ scale: 1.1 }}
-                                                    whileTap={{ scale: 0.9 }}
+                                                    className="absolute top-4 left-4 bg-white/90 hover:bg-white p-2 rounded-full shadow-md z-10 transition-transform hover:scale-110 active:scale-90"
                                                     title={wishlistIds.includes(pkg.id) ? 'Remove from wishlist' : 'Add to wishlist'}
                                                 >
                                                     <svg 
@@ -369,7 +344,7 @@ function HomePage() {
                                                     >
                                                         <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                                                     </svg>
-                                                </motion.button>
+                                                </button>
                                                 {!isAuthenticated() && (
                                                     <div className="absolute inset-0 bg-black/0 hover:bg-black/10 transition-all flex items-center justify-center group">
                                                         <div className="opacity-0 group-hover:opacity-100 transition-opacity bg-white px-4 py-2 rounded-lg shadow-lg">
@@ -399,19 +374,17 @@ function HomePage() {
                                                 </div>
                                                 <p className="text-gray-600 text-sm mb-4 line-clamp-2">{pkg.description}</p>
                                                 
-                                                <motion.button
+                                                <button
                                                     onClick={() => handleViewDetails(pkg.id)}
-                                                    className="block w-full bg-[#2B4C8F] text-white hover:bg-blue-800 py-3 rounded-lg font-semibold transition text-center"
-                                                    whileHover={{ scale: 1.02 }}
-                                                    whileTap={{ scale: 0.98 }}
+                                                    className="block w-full bg-[#2B4C8F] text-white hover:bg-blue-800 py-3 rounded-lg font-semibold transition text-center hover:scale-[1.02] active:scale-[0.98]"
                                                 >
                                                     {isAuthenticated() ? 'View Details' : 'Login to Book'}
-                                                </motion.button>
+                                                </button>
                                             </div>
                                         </Card>
-                                    </motion.div>
+                                    </div>
                                 ))}
-                            </motion.div>
+                            </div>
 
                             {filteredPackages.length > 6 && (
                                 <div className="text-center">

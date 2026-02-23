@@ -39,7 +39,7 @@ app.use((req, res, next) => {
 });
 
 // Rate limiting
-app.use(createRateLimiter({ windowMs: 15 * 60 * 1000, max: 120 }));
+app.use(createRateLimiter({ windowMs: 15 * 60 * 1000, max: 500 }));
 
 // Mount routes (support both /api/* and legacy root paths)
 app.use('/api/users', routes.UserRoute);
